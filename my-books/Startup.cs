@@ -1,24 +1,23 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using my_books.Data;
+using my_books.Data.Services;
 
 namespace my_books
 {
   public class Startup
   {
+    public string ConnectionString { get; set; }
+
     public Startup(IConfiguration configuration)
     {
       Configuration = configuration;
+      ConnectionString = Configuration.GetConnectionString("DefaultConnectionString");
     }
 
     public IConfiguration Configuration { get; }
@@ -26,11 +25,17 @@ namespace my_books
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-
       services.AddControllers();
+
+      services.AddDbContext<AppDbContext>(options => options.UseSqlServer(ConnectionString));
+
+      services.AddTransient<BooksService>();
+      services.AddTransient<AuthorsService>();
+      services.AddTransient<PublishersService>();
+
       services.AddSwaggerGen(c =>
       {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "my_books", Version = "v1" });
+        c.SwaggerDoc("v2", new OpenApiInfo { Title = "my_books_updated_title", Version = "v2" });
       });
     }
 
@@ -41,7 +46,7 @@ namespace my_books
       {
         app.UseDeveloperExceptionPage();
         app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "my_books v1"));
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v2/swagger.json", "my_books_ui_updated v1"));
       }
 
       app.UseHttpsRedirection();
@@ -54,6 +59,10 @@ namespace my_books
       {
         endpoints.MapControllers();
       });
+
+      // Not in Use, kept as a reference
+      // AppDbInitializer.Seed(app);
+
     }
   }
 }
