@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
-
+using my_books.ActionResults;
 using my_books.Data.Services;
 using my_books.Data.ViewModels;
 using my_books.Exceptions;
@@ -32,13 +32,45 @@ namespace my_publishers.Controllers
     {
       var publisher = _publishersService.GetPublisherById(id);
 
-      if (publisher == null)
+      if (publisher != null)
+      {
+        return Ok(publisher);
+      }
+      else
       {
         return NotFound();
       }
-
-      return Ok(publisher);
     }
+
+    //---------------------------------------------------------------------------------------------
+    /*
+    [HttpGet("get-publisher-by-id/{id}")]
+    public CustomActionResult GetPublisherById(int id)
+    {
+      var publisher = _publishersService.GetPublisherById(id);
+
+      if (publisher != null)
+      {
+        // Using a Custom Action Result
+        var _responseObj = new CustomActionResultVM()
+        {
+          Publisher = publisher
+        };
+
+        return new CustomActionResult(_responseObj);
+      }
+      else
+      {
+        // Using a Custom Action Result
+        var _responseObj = new CustomActionResultVM()
+        {
+          Exception = new Exception("Custom Exception from GetPublisherById Controller")
+        };
+
+        return new CustomActionResult(_responseObj);
+      }
+    }
+    */
 
     //---------------------------------------------------------------------------------------------
     [HttpGet("get-publisher-books-with-authors/{id}")]
