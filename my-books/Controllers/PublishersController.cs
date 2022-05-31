@@ -20,10 +20,17 @@ namespace my_publishers.Controllers
 
     //---------------------------------------------------------------------------------------------
     [HttpGet("get-all-publishers")]
-    public IActionResult GetAllPublishers()
+    public IActionResult GetAllPublishers(string sortBy, string filterBy, int pageNumber)
     {
-      var allPublishers = _publishersService.GetAllPublishers();
-      return Ok(allPublishers);
+      try
+      {
+        var allPublishers = _publishersService.GetAllPublishers(sortBy, filterBy, pageNumber);
+        return Ok(allPublishers);
+      }
+      catch (Exception ex)
+      {
+        return BadRequest($"Publisher could not be loaded: {ex}");
+      }
     }
 
     //---------------------------------------------------------------------------------------------
@@ -42,6 +49,8 @@ namespace my_publishers.Controllers
       }
     }
 
+    //---------------------------------------------------------------------------------------------
+    // Using a Custom Action Result Type
     //---------------------------------------------------------------------------------------------
     /*
     [HttpGet("get-publisher-by-id/{id}")]

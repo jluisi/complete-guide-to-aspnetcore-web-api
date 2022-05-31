@@ -6,6 +6,7 @@ using my_books.Data.Models;
 using my_books.Data.ViewModels;
 using System.Text.RegularExpressions;
 using my_books.Exceptions;
+using my_books.Data.Paging;
 
 namespace my_books.Data.Services
 {
@@ -19,9 +20,37 @@ namespace my_books.Data.Services
     }
 
     //---------------------------------------------------------------------------------------------
-    public List<Publisher> GetAllPublishers()
+    public List<Publisher> GetAllPublishers(string sortBy, string filterBy, int? pageNumber)
     {
-      return _context.Publishers.ToList();
+      // Read All Publishers from the Database and sort them Ascending by Name
+      var allPublishers = _context.Publishers.OrderBy(p => p.Name).ToList();
+
+      // Sorting
+      if (!string.IsNullOrEmpty(sortBy))
+      {
+        switch (sortBy)
+        {
+          case "name_desc":
+            allPublishers = allPublishers.OrderByDescending(p => p.Name).ToList();
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      // Filtering
+      if (!string.IsNullOrEmpty(filterBy))
+      {
+        // To add more properties to the Filter use the 'or' operator (||)
+        allPublishers = allPublishers.Where(p => p.Name.Contains(filterBy, StringComparison.CurrentCultureIgnoreCase)).ToList();
+      }
+
+      // Paging
+      int pageSize = 5;
+      allPublishers = PaginatedList<Publisher>.Create(allPublishers.AsQueryable(), pageNumber ?? 1, pageSize);
+
+      return allPublishers;
     }
 
     //---------------------------------------------------------------------------------------------

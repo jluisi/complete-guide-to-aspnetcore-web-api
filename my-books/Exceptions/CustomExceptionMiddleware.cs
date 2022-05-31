@@ -37,7 +37,7 @@ namespace my_books.Exceptions
       var response = new ErrorVM()
       {
         StatusCode = httpContext.Response.StatusCode,
-        Message = "Internal Server Error from the Custom Middleware",
+        Message = $"Internal Server Error from the Custom Middleware: {ex}",
         Path = "path-goes-here"
       };
 

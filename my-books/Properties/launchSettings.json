@@ -17,6 +17,14 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
+    "Publishers": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "api/publishers/get-all-publishers",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
     "my_books": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
